@@ -107,49 +107,48 @@ public class Player {
     /**
      * pre flop strategy, base on chen ratings
      */
-    private void preflop(double rating, int stack) {
+    private void preflop(double rating) {
+        //good hand, use raise strategy
         if (rating >= 6 && this.info.isLegal("RAISE")) {
             int[] range = this.info.raiseRange();
-            int amount = (int)(stack*rating/100);
+
+            //TODO:subject to change
+            int amount = (int)(this.info.bb*rating/2);
+
             //Pair of jacks or better, always raise
             if (rating >= 12) {
-                int strongAmount = Math.max(4*this.info.bb, amount*2);
+                int strongAmount = amount*2;
                 if (strongAmount>=range[0] && strongAmount<=range[1]) {
                     outStream.println("RAISE:"+strongAmount);
-                } else if (amount>range[1]){
+                } else if (strongAmount>range[1]){
                     outStream.println("RAISE:"+range[1]);
                 } else {
+                    //reraise be careful
                     outStream.println("RAISE:"+range[0]);
                 }
             }
             //Above average (QTu), consider raising
             else {
-                if (amount>=range[0]) {
+                if (amount>=range[0] && amount<=range[1]) {
                     outStream.println("RAISE:"+amount);
+                } else if (amount > range[1]) {
+                    System.out.println("ERROR: should not raise above");
+                    outStream.println("RAISE:"+range[1]);
+                }
+
+                else if (this.info.potSize < amount) {
+                    outStream.println("CALL");
+                } else {
+                    checkFold();
                 }
             }
         }
 
-        if (rating >= 12 && this.info.isLegal("RAISE")) {
-            int amount = Math.max(4*this.info.bb, (int)(stack*rating/50));
-            int[] range = this.info.raiseRange();
-
-        }
-        //decent hand raise by a little
-        else if (rating >= 6 && this.info.isLegal("RAISE")) {
-            int amount = Math.max(this.info.bb, (int)(stack*rating/100));
-            int[] range = this.info.raiseRange();
-            if (this.info.bb <= (int)(stack*rating/100)) {
-                outStream.println("RAISE:"+(int)(stack*rating/100));
-            } else {
-                checkFold();
-            }
-        }
         //call blind, call raises only on ok hand
         else if (this.info.isLegal("CALL")) {
             if (this.info.potSize < this.info.bb * 2) {
                 outStream.println("CALL");
-            } else if (rating >= 8 && this.info.potSize / 2 < (int) (stack * rating / 150)) {
+            } else if (rating >= 8 && this.info.potSize / 2 < (int) (this.info.bb * rating / 150)) {
                 outStream.println("CALL");
             } else {
                 checkFold();
@@ -163,12 +162,12 @@ public class Player {
     /**
      * post flop strategy
      */
-    private void postflop(double rating, int stack) {
+    private void postflop() {
         Hand hand = Hand.eval(this.info.allCards);
         System.out.println(hand.toString());
-        int odd = (int)((double)(hand.getValue())/MAXIMUM * stack);
+        int odd = (int)((double)(hand.getValue())/MAXIMUM * 100 * this.info.bb);
         if (this.info.isLegal("BET")) {
-            System.out.println((double)(hand.getValue())/MAXIMUM * stack);
+            System.out.println((double)(hand.getValue())/MAXIMUM * 100 * this.info.bb);
             if (odd > this.info.bb) {
                 System.out.println("RAISE:" + odd);
                 outStream.println("RAISE:" + odd);
@@ -177,7 +176,7 @@ public class Player {
             }
         }
         else if (this.info.isLegal("RAISE")) {
-            System.out.println((double)(hand.getValue())/MAXIMUM * stack);
+            System.out.println((double)(hand.getValue())/MAXIMUM * this.info.bb);
             if (odd > this.info.bb) {
                 System.out.println("RAISE:" + odd);
                 outStream.println("RAISE:" + odd);
@@ -239,25 +238,28 @@ public class Player {
                 } else if ("GETACTION".compareToIgnoreCase(words[0]) == 0) {
                     parseAction(words);
                     double rating = this.info.pocketRating;
-                    int stack = this.info.stackSize + this.info.myBank;
-                    //System.out.println(rating);
-                    //System.out.println(rating + ", " + this.info.potSize/2 + ", " + stack);
 
                     //Pre Flop Strategy
                     if (this.info.boardCards.size() == 0) {
-                        preflop(rating,stack);
+                        preflop(rating);
                     }
                     //Post Flop
                     else if (this.info.boardCards.size() == 3) {
-                        postflop(rating,stack);
+                        postflop();
+                        //checkFold();
                     }
                     //turn
                     else if (this.info.boardCards.size() == 4) {
-
+                        checkFold();
                     }
                     //river
                     else if (this.info.boardCards.size() == 5) {
+                        checkFold();
+                    }
 
+                    else {
+                        System.out.println("Should not reach");
+                        checkFold();
                     }
                 } else if ("REQUESTKEYVALUES".compareToIgnoreCase(words[0]) == 0) {
                     // At the end, engine will allow bot to send key/value pairs to store.
