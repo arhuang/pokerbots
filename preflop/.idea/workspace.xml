@@ -33,11 +33,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Player.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Player.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Player.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="813">
-              <caret line="269" column="59" selection-start-line="269" selection-start-column="59" selection-end-line="269" selection-end-column="59" />
+            <state relative-caret-position="461">
+              <caret line="302" column="99" selection-start-line="302" selection-start-column="99" selection-end-line="302" selection-end-column="99" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#Discard#0;class#Player#0" expanded="false" />
@@ -46,11 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Information.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Information.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Information.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+            <state relative-caret-position="548">
+              <caret line="87" column="17" selection-start-line="87" selection-start-column="17" selection-end-line="87" selection-end-column="17" />
               <folding>
                 <element signature="method#evalPocket#0;class#Information#0" expanded="false" />
               </folding>
@@ -136,8 +136,8 @@
         <option value="$PROJECT_DIR$/src/pokerbots/player/Card.java" />
         <option value="$PROJECT_DIR$/src/pokerbots/player/CardList.java" />
         <option value="$PROJECT_DIR$/src/pokerbots/player/Hand.java" />
-        <option value="$PROJECT_DIR$/src/pokerbots/player/Information.java" />
         <option value="$PROJECT_DIR$/src/pokerbots/player/Player.java" />
+        <option value="$PROJECT_DIR$/src/pokerbots/player/Information.java" />
       </list>
     </option>
   </component>
@@ -753,6 +753,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="302" column="99" selection-start-line="302" selection-start-column="99" selection-end-line="302" selection-end-column="99" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#Discard#0;class#Player#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Hand.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="218">
@@ -774,21 +785,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Information.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+        <state relative-caret-position="548">
+          <caret line="87" column="17" selection-start-line="87" selection-start-column="17" selection-end-line="87" selection-end-column="17" />
           <folding>
             <element signature="method#evalPocket#0;class#Information#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Player.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="813">
-          <caret line="269" column="59" selection-start-line="269" selection-start-column="59" selection-end-line="269" selection-end-column="59" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#Discard#0;class#Player#0" expanded="false" />
           </folding>
         </state>
       </provider>

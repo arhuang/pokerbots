@@ -193,7 +193,7 @@ public class Player {
         if ((double)(hand.getValue() - board.getValue()) / hand.getValue() > 0.01) {
 
             //pair only bet/call/check/fold
-            if (rating > .1 && rating < .24) {
+            if (rating > .12 && rating < .24) {
                 if (this.info.isLegal("BET")) {
                     outStream.println("BET:" + amount/2);
                 } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount) {
@@ -233,7 +233,7 @@ public class Player {
                 checkFold();
             }
         } else {
-            //System.out.println("board strong: " + hand.toString() + this.info.pocket.toString());
+            System.out.println(hand.toString() + this.info.pocket.toString());
             checkFold();
         }
     }
@@ -288,15 +288,19 @@ public class Player {
                     }
                     //Post Flop
                     else if (this.info.boardCards.size() == 3) {
-                        postflop();
+                        if (this.info.isLegal("CALL")) {
+                            outStream.println("CALL");
+                        } else {
+                            checkFold();
+                        }
                     }
                     //turn
                     else if (this.info.boardCards.size() == 4) {
-                        postflop();
+                        checkFold();
                     }
                     //river
                     else if (this.info.boardCards.size() == 5) {
-                        postflop();
+                        checkFold();
                     }
 
                     else {
