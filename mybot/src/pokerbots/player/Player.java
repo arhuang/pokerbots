@@ -3,7 +3,6 @@ package pokerbots.player;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
 
 /**
  * Simple example pokerbot, written in Java.
@@ -22,12 +21,16 @@ public class Player {
     private static final double MAXIMUM = 135191738;
     private Information info;
 
+    private CardList allpossible = new CardList();
+
     public Player(PrintWriter output, BufferedReader input) {
         this.outStream = output;
         this.inStream = input;
-//        this.check = 1/3.;
-//        this.fold = 1/3.;
-//        this.raise = 1;
+        for (Card.Suit suit: Card.Suit.values()) {
+            for (Card.Rank rank: Card.Rank.values()) {
+                this.allpossible.add(new Card(rank,suit));
+            }
+        }
     }
 
     /**
@@ -91,6 +94,81 @@ public class Player {
     }
 
     /**
+     *
+     */
+    private double getMaximum() {
+        double maximum = 0;
+        for (Card card1: allpossible) {
+            CardSet hand = new CardSet(this.info.boardCards);
+
+            if (!this.info.allCards.contains(card1)) {
+                hand.add(card1);
+
+                for (Card card2: allpossible) {
+                    CardSet hand2 = new CardSet(hand);
+                    if (!this.info.allCards.contains(card2) && !card1.equals(card2)) {
+                        hand2.add(card2);
+
+                        double val = Hand.fastEval(hand2);
+                        if (val > maximum) {
+                            maximum = val;
+                        }
+                    }
+                }
+            }
+        }
+        return maximum;
+    }
+
+    /**
+     * gets the fraction of possible opponent hands that beat ours
+     */
+    private double getBetter() {
+        double temp = Hand.fastEval(this.info.allCards);
+        int count = 0;
+        int total = (52-this.info.allCards.size()) * (51-this.info.allCards.size());
+
+        for (Card card1: allpossible) {
+            CardSet hand = new CardSet(this.info.boardCards);
+
+            if (!this.info.allCards.contains(card1)) {
+                hand.add(card1);
+
+                for (Card card2: allpossible) {
+                    CardSet hand2 = new CardSet(hand);
+                    if (!this.info.allCards.contains(card2) && !card1.equals(card2)) {
+                        hand2.add(card2);
+
+                        double val = Hand.fastEval(hand2);
+                        if (val > temp) {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        return (double)count/(double)total;
+    }
+
+    /**
+     * gets the expected value of the outs on the next hand
+     */
+    private double getOut() {
+        double count = 0;
+        double total = (52-this.info.allCards.size());
+
+        for (Card card: allpossible) {
+            CardSet hand = new CardSet(this.info.allCards);
+
+            if (!this.info.allCards.contains(card)) {
+                hand.add(card);
+                count += Hand.fastEval(hand);
+            }
+        }
+        return count/total;
+    }
+
+    /**
      * will check if possible, otherwise fold
      */
     private void checkFold() {
@@ -106,7 +184,7 @@ public class Player {
      */
     private void preflop(double rating) {
 
-        //TODO:subject to change
+        //upper bounded at 10 big binds
         int amount = (int)(this.info.bb*rating/2);
 
         //good hand, use raise strategy
@@ -136,7 +214,7 @@ public class Player {
                     outStream.println("RAISE:"+range[1]);
                 }
                 //consider calling
-                else if (this.info.potSize < amount) {
+                else if (this.info.getCallAmount() < amount) {
                     outStream.println("CALL");
                 } else {
                     checkFold();
@@ -170,40 +248,46 @@ public class Player {
      * post flop strategy
      *
      * Hand Ratings
-     * <0.12 - high card
-     * .12-.24 - pair
-     * .24-.37 - 2 pair
-     * .37-.49 - 3 of a kind
-     * .49-.62 - straight
-     * .62-.74 - flush
-     * .74-.86 - full house
-     * .86-.9 - 4 of a kind
-     * >.9 - straight flush
+     * <0.12 (1,000,000) high card
+     * .12-.24 (16,000,000 - 18,000,000) pair
+     * .24-.37 - (33,000,000 - 35,000,000) 2 pair
+     * .37-.49 - (50,000,000 - 52,000,000) 3 of a kind
+     * .49-.62 - (67,000,000 - 69,000,000) straight
+     * .62-.74 - (84,000,000 - 85,000,000) flush
+     * .74-.86 - (100,000,000 - 102,000,000) full house
+     * .86-.9 - (117,000,000 - 118,000,000) 4 of a kind
+     * >.9 - (134,000,000 - 136,000,000) straight flush
      */
     private void postflop() {
-        Hand hand = Hand.eval(this.info.allCards);
-        Hand board = Hand.eval(this.info.boardCards);
+        double maximum = getMaximum();
+        double strength = 1-getBetter();
+        double out = getOut();
 
-        double rating = (double)hand.getValue()/MAXIMUM;
-        int amount = (int)(rating*100)/2 * this.info.bb;
+        Hand hand = Hand.eval(this.info.allCards);
+        Hand board;
+        if (this.info.boardCards.size() > 0) {
+            board = Hand.eval(this.info.boardCards);
+        } else {
+            System.out.println("ERROR: should not call postflop with no board cards: " + this.info.boardCards.toString());
+            return;
+        }
+
+
+        double rating = (double)hand.getValue()/maximum;
+        //double temp = strength;
+        strength = Math.min(1, (strength*0.8)+((rating+0.3)*0.2) );
+
+        //System.out.println(this.info.pocket.toString() + ": " + hand.toString() + ", " + temp + ", " + strength);
+        //will raise ranging from 1 bb for 50/50 to 50 big blind for 100% win
+        int amount = Math.max(0,(int)((strength-0.49) * 100))*this.info.bb;//(int)(rating/maximum*100)/2 * this.info.bb;
 
         int[] range = this.info.raiseRange();
 
         //our pocket cards contribute to the rating i.e. opp doesnt have same rating
-        if ((double)(hand.getValue() - board.getValue()) / hand.getValue() > 0.01) {
+        if (strength > 0.2 && (double)(hand.getValue() - board.getValue()) / hand.getValue() > 0.01) {
 
-            //pair only bet/call/check/fold
-            if (rating > .1 && rating < .24) {
-                if (this.info.isLegal("BET")) {
-                    outStream.println("BET:" + amount/2);
-                } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount) {
-                    outStream.println("CALL");
-                } else {
-                    checkFold();
-                }
-            }
-            //better than 2 pair, allow to reraise
-            else if (rating > 0.24) {
+            //70% chance win, very strong
+            if (strength > 0.7) {
                 if (this.info.isLegal("BET")) {
                     outStream.println("BET: " + amount);
                 } else if (this.info.isLegal("RAISE")) {
@@ -213,9 +297,9 @@ public class Player {
                         outStream.println("RAISE:" + range[1]);
                     }
                     //must raise more than amount (reraise)
-                    else if(rating > 0.35) {
+                    else if(strength > 0.85) {
                         outStream.println("RAISE:" + range[0]);
-                    } else if (this.info.getCallAmount() < amount){
+                    } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount){
                         outStream.println("CALL");
                     } else {
                         checkFold();
@@ -229,10 +313,20 @@ public class Player {
                 } else {
                     checkFold();
                 }
+            }
+            else if (strength > 0.4) {
+                if (this.info.isLegal("BET")) {
+                    outStream.println("BET:" + amount/1.5);
+                } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount) {
+                    outStream.println("CALL");
+                } else {
+                    checkFold();
+                }
             } else {
                 checkFold();
             }
         } else {
+            //System.out.println("board: " + better);
             //System.out.println("board strong: " + hand.toString() + this.info.pocket.toString());
             checkFold();
         }
@@ -247,8 +341,7 @@ public class Player {
         Hand board = Hand.eval(this.info.boardCards);
 
         if (this.info.isLegal("DISCARD")) {
-            if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && this.info.pocketRating < 6) {
-                System.out.println(this.info.pocket.getSecond().toString());
+            if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && this.info.pocketRating < 5) {
                 outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
             }
         }
@@ -260,8 +353,6 @@ public class Player {
             // Block until engine sends us a packet; read it into input.
             while ((input = inStream.readLine()) != null) {
 
-                // Here is where you should implement code to parse the packets
-                // from the engine and act on it.
                 //System.out.println(input);
 
                 String[] words = input.split(" ");
@@ -279,7 +370,7 @@ public class Player {
                     }
                     //Post Flop
                     else if (this.info.boardCards.size() == 3) {
-                        discard();
+                        //discard();
                         postflop();
                     }
                     //turn

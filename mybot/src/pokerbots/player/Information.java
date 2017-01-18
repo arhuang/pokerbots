@@ -79,12 +79,8 @@ public class Information {
         for (int i=0; i<this.lastActions.length; i++) {
             if (this.lastActions[i].contains("RAISE") || this.lastActions[i].contains("BET")) {
                 String[] action = this.lastActions[i].split(":");
-                //System.out.println(this.lastActions[i]);
                 if (action[2].equals(this.oppName)) {
                     return Integer.parseInt(action[1]);
-                } else {
-                    System.out.println("ERROR: opponent did not raise last: " + action[2]);
-                    return 0;
                 }
             }
         }

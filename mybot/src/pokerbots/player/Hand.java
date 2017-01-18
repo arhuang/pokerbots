@@ -27,7 +27,7 @@ public class Hand implements Comparable<Hand> {
     private CardList cardList;
     private int handValue;
 
-    private Hand(Category category, CardList cardList, int handValue) {
+    public Hand(Category category, CardList cardList, int handValue) {
         this.category = category;
         this.cardList = cardList;
         this.handValue = handValue;
@@ -428,14 +428,14 @@ public class Hand implements Comparable<Hand> {
 
         Card[] high7 = {Card.valueOf("2s"),Card.valueOf("3c"),Card.valueOf("4s"),Card.valueOf("5c"),Card.valueOf("7s")};
         Card[] highA = {Card.valueOf("9s"),Card.valueOf("Jc"),Card.valueOf("Qs"),Card.valueOf("Kc"),Card.valueOf("As")};
-        Card[] pair = {Card.valueOf("2s"),Card.valueOf("2c"),Card.valueOf("3s"),Card.valueOf("4c"),Card.valueOf("5s")};
-        Card[] twoPair = {Card.valueOf("2s"),Card.valueOf("2c"),Card.valueOf("3s"),Card.valueOf("3c"),Card.valueOf("4s")};
-        Card[] triple = {Card.valueOf("2s"),Card.valueOf("2c"),Card.valueOf("2d"),Card.valueOf("3c"),Card.valueOf("4s")};
-        Card[] straight = {Card.valueOf("2s"),Card.valueOf("3c"),Card.valueOf("4s"),Card.valueOf("5c"),Card.valueOf("6s")};
-        Card[] flushS = {Card.valueOf("2s"),Card.valueOf("3s"),Card.valueOf("4s"),Card.valueOf("5s"),Card.valueOf("7s")};
+        Card[] pair = {Card.valueOf("As"),Card.valueOf("Ac"),Card.valueOf("Ks"),Card.valueOf("Qc"),Card.valueOf("Js")};
+        Card[] twoPair = {Card.valueOf("As"),Card.valueOf("Ac"),Card.valueOf("Ks"),Card.valueOf("Kc"),Card.valueOf("Qs")};
+        Card[] triple = {Card.valueOf("As"),Card.valueOf("Ac"),Card.valueOf("Ad"),Card.valueOf("Kc"),Card.valueOf("Qs")};
+        Card[] straight = {Card.valueOf("As"),Card.valueOf("Kc"),Card.valueOf("Qs"),Card.valueOf("Jc"),Card.valueOf("Ts")};
+        Card[] flushS = {Card.valueOf("As"),Card.valueOf("Ks"),Card.valueOf("Qs"),Card.valueOf("Js"),Card.valueOf("9s")};
         Card[] flushC = {Card.valueOf("2c"),Card.valueOf("3c"),Card.valueOf("4c"),Card.valueOf("5c"),Card.valueOf("7c")};
-        Card[] fullhouse = {Card.valueOf("2s"),Card.valueOf("2c"),Card.valueOf("2d"),Card.valueOf("3c"),Card.valueOf("3s")};
-        Card[] fourKind = {Card.valueOf("As"),Card.valueOf("Ac"),Card.valueOf("Ad"),Card.valueOf("Ah"),Card.valueOf("Ks")};
+        Card[] fullhouse = {Card.valueOf("As"),Card.valueOf("Ac"),Card.valueOf("Ad"),Card.valueOf("Kc"),Card.valueOf("Ks")};
+        Card[] fourKind = {Card.valueOf("2s"),Card.valueOf("2c"),Card.valueOf("2d"),Card.valueOf("2h"),Card.valueOf("3s")};
         Card[] straightflush = {Card.valueOf("2s"),Card.valueOf("3s"),Card.valueOf("4s"),Card.valueOf("5s"),Card.valueOf("6s")};
         Card[] best = {Card.valueOf("As"),Card.valueOf("Ks"),Card.valueOf("Qs"),Card.valueOf("Js"),Card.valueOf("Ts")};
 
