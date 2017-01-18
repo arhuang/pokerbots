@@ -56,7 +56,7 @@ public class Information {
     public int[] raiseRange() {
         int[] range = {0,0};
         if (!isLegal("RAISE") && !isLegal("BET")) {
-            System.out.println("Raise/Bet is not possible");
+            //System.out.println("Raise/Bet is not possible");
             return range;
         } else {
             for (String str: this.legalActions) {

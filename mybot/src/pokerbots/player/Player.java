@@ -242,25 +242,16 @@ public class Player {
 
     private void river() {}
 
-    private void Discard() {
-        //Discard Strategy
-        /*CardSet set1 = new CardSet();
-        CardSet set2 = new CardSet();
-        for (Card card: this.info.boardCards) {
-            set1.add(card);
-            set2.add(card);
+    private void discard() {
+        Hand hand = Hand.eval(this.info.allCards);
+        Hand board = Hand.eval(this.info.boardCards);
+
+        if (this.info.isLegal("DISCARD")) {
+            if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && this.info.pocketRating < 6) {
+                System.out.println(this.info.pocket.getSecond().toString());
+                outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
+            }
         }
-        set1.add(this.info.pocket.getFirst());
-        set2.add(this.info.pocket.getSecond());
-
-
-        if (hand.getValue() == Hand.fastEval(set1)) {
-            System.out.println("DISCARD:" + this.info.pocket.getSecond().toString());
-            //outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
-        } else if (hand.getValue() == Hand.fastEval(set2)) {
-            System.out.println("DISCARD:" + this.info.pocket.getFirst().toString());
-            //outStream.println("DISCARD:" + this.info.pocket.getFirst().toString());
-        }*/
     }
 
     public void run() {
@@ -288,10 +279,12 @@ public class Player {
                     }
                     //Post Flop
                     else if (this.info.boardCards.size() == 3) {
+                        discard();
                         postflop();
                     }
                     //turn
                     else if (this.info.boardCards.size() == 4) {
+                        //discard();
                         postflop();
                     }
                     //river
