@@ -155,17 +155,41 @@ public class Player {
      */
     private double getOut() {
         double count = 0;
-        double total = (52-this.info.allCards.size());
+        double total;
 
-        for (Card card: allpossible) {
-            CardSet hand = new CardSet(this.info.allCards);
+        if (this.info.boardCards.size() == 3) {
+            total = (52-this.info.allCards.size())*(51-this.info.allCards.size());
+            for (Card card1 : allpossible) {
+                CardSet hand = new CardSet(this.info.allCards);
 
-            if (!this.info.allCards.contains(card)) {
-                hand.add(card);
-                count += Hand.fastEval(hand);
+                if (!this.info.allCards.contains(card1)) {
+                    hand.add(card1);
+
+                    for (Card card2 : allpossible) {
+                        CardSet hand2 = new CardSet(hand);
+                        if (!this.info.allCards.contains(card2) && !card1.equals(card2)) {
+                            hand2.add(card2);
+                            count += Hand.fastEval(hand2);
+                        }
+                    }
+                }
             }
+            return count/total;
+        } else if (this.info.boardCards.size() == 4) {
+            total = (52-this.info.allCards.size());
+            for (Card card: allpossible) {
+                CardSet hand = new CardSet(this.info.allCards);
+
+                if (!this.info.allCards.contains(card)) {
+                    hand.add(card);
+                    count += Hand.fastEval(hand);
+                }
+            }
+            return count/total;
+        } else {
+            //System.out.println("ERROR: can't get outs not on flop or turn: " + this.info.boardCards.size());
+            return Hand.fastEval(this.info.allCards);
         }
-        return count/total;
     }
 
     /**
@@ -261,7 +285,7 @@ public class Player {
     private void postflop() {
         double maximum = getMaximum();
         double strength = 1-getBetter();
-        double out = getOut();
+        double out = getOut()/maximum;
 
         Hand hand = Hand.eval(this.info.allCards);
         Hand board;
@@ -272,10 +296,11 @@ public class Player {
             return;
         }
 
-
         double rating = (double)hand.getValue()/maximum;
+
+        System.out.println(hand.toString() + ", " + rating + ", " + out);
         //double temp = strength;
-        strength = Math.min(1, (strength*0.8)+((rating+0.3)*0.2) );
+        strength = Math.min(1, (strength*0.8)+((out+0.3)*0.2) );
 
         //System.out.println(this.info.pocket.toString() + ": " + hand.toString() + ", " + temp + ", " + strength);
         //will raise ranging from 1 bb for 50/50 to 50 big blind for 100% win
@@ -338,7 +363,13 @@ public class Player {
 
     private void discard() {
         Hand hand = Hand.eval(this.info.allCards);
-        Hand board = Hand.eval(this.info.boardCards);
+        Hand board;
+        if (this.info.boardCards.size() > 0) {
+            board = Hand.eval(this.info.boardCards);
+        } else {
+            System.out.println("ERROR: should not discard with no board cards: " + this.info.boardCards.toString());
+            return;
+        }
 
         if (this.info.isLegal("DISCARD")) {
             if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && this.info.pocketRating < 5) {
@@ -368,14 +399,14 @@ public class Player {
                     if (this.info.boardCards.size() == 0) {
                         preflop(rating);
                     }
-                    //Post Flop
+                    //Flop
                     else if (this.info.boardCards.size() == 3) {
-                        //discard();
+                        discard();
                         postflop();
                     }
                     //turn
                     else if (this.info.boardCards.size() == 4) {
-                        //discard();
+                        discard();
                         postflop();
                     }
                     //river
