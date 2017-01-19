@@ -18,7 +18,6 @@ public class Player {
     private final PrintWriter outStream;
     private final BufferedReader inStream;
 
-    private static final double MAXIMUM = 135191738;
     private Information info;
 
     private CardList allpossible = new CardList();
@@ -94,19 +93,19 @@ public class Player {
     }
 
     /**
-     *
+     * gets the maximum possible score (with any two pocket cards) given the board cards
      */
     private double getMaximum() {
         double maximum = 0;
         for (Card card1: allpossible) {
             CardSet hand = new CardSet(this.info.boardCards);
 
-            if (!this.info.allCards.contains(card1)) {
+            if (!this.info.boardCards.contains(card1)) {
                 hand.add(card1);
 
                 for (Card card2: allpossible) {
                     CardSet hand2 = new CardSet(hand);
-                    if (!this.info.allCards.contains(card2) && !card1.equals(card2)) {
+                    if (!this.info.boardCards.contains(card2) && !card1.equals(card2)) {
                         hand2.add(card2);
 
                         double val = Hand.fastEval(hand2);
@@ -357,13 +356,16 @@ public class Player {
         }
     }
 
-    private void turn() {}
 
-    private void river() {}
-
+    /**
+     * discard strategy
+     */
     private void discard() {
         Hand hand = Hand.eval(this.info.allCards);
         Hand board;
+
+        double out = getOut()/getMaximum();
+
         if (this.info.boardCards.size() > 0) {
             board = Hand.eval(this.info.boardCards);
         } else {
@@ -372,12 +374,15 @@ public class Player {
         }
 
         if (this.info.isLegal("DISCARD")) {
-            if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && this.info.pocketRating < 5) {
+            if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && out < 0.2) {
                 outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
             }
         }
     }
 
+    /**
+     * main method to run
+     */
     public void run() {
         String input;
         try {

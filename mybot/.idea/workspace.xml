@@ -33,13 +33,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Player.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Player.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Player.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="491">
-              <caret line="302" column="64" selection-start-line="302" selection-start-column="64" selection-end-line="302" selection-end-column="64" />
+            <state relative-caret-position="285">
+              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="method#newHandInfo#0;class#Player#0" expanded="false" />
+                <element signature="method#parseAction#0;class#Player#0" expanded="false" />
+                <element signature="method#getMaximum#0;class#Player#0" expanded="false" />
+                <element signature="method#getBetter#0;class#Player#0" expanded="false" />
+                <element signature="method#getOut#0;class#Player#0" expanded="false" />
+                <element signature="method#checkFold#0;class#Player#0" expanded="false" />
+                <element signature="method#preflop#0;class#Player#0" expanded="false" />
+                <element signature="method#postflop#0;class#Player#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -48,9 +56,11 @@
       <file leaf-file-name="Information.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Information.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1699">
+            <state relative-caret-position="-709">
               <caret line="19" column="27" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="27" />
-              <folding />
+              <folding>
+                <element signature="method#evalPocket#0;class#Information#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -58,7 +68,7 @@
       <file leaf-file-name="Card.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Card.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-664">
+            <state relative-caret-position="-484">
               <caret line="97" column="10" selection-start-line="97" selection-start-column="10" selection-end-line="97" selection-end-column="10" />
               <folding />
             </state>
@@ -68,7 +78,7 @@
       <file leaf-file-name="Pocket.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Pocket.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-289">
+            <state relative-caret-position="-109">
               <caret line="25" column="32" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
               <folding />
             </state>
@@ -91,7 +101,7 @@
       <file leaf-file-name="CardList.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/CardList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-82">
+            <state relative-caret-position="146">
               <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
               <folding>
                 <element signature="e#539#540#0" expanded="true" />
@@ -101,7 +111,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CardSet.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CardSet.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/CardSet.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-109">
@@ -631,6 +641,14 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#newHandInfo#0;class#Player#0" expanded="false" />
+            <element signature="method#parseAction#0;class#Player#0" expanded="false" />
+            <element signature="method#getMaximum#0;class#Player#0" expanded="false" />
+            <element signature="method#getBetter#0;class#Player#0" expanded="false" />
+            <element signature="method#getOut#0;class#Player#0" expanded="false" />
+            <element signature="method#checkFold#0;class#Player#0" expanded="false" />
+            <element signature="method#preflop#0;class#Player#0" expanded="false" />
+            <element signature="method#postflop#0;class#Player#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -639,7 +657,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2085">
           <caret line="139" column="46" selection-start-line="139" selection-start-column="46" selection-end-line="139" selection-end-column="46" />
-          <folding />
+          <folding>
+            <element signature="method#evalPocket#0;class#Information#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -693,7 +713,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="method#evalPocket#0;class#Information#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -722,25 +744,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/CardList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-82">
-          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-          <folding>
-            <element signature="e#539#540#0" expanded="true" />
-            <element signature="e#567#568#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/CardSet.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-109">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/src.zip!/java/lang/Enum.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -752,18 +755,56 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Pocket.java">
+    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-289">
-          <caret line="25" column="32" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
-          <folding />
+        <state relative-caret-position="-30">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#newHandInfo#0;class#Player#0" expanded="false" />
+            <element signature="method#parseAction#0;class#Player#0" expanded="false" />
+            <element signature="method#getMaximum#0;class#Player#0" expanded="false" />
+            <element signature="method#getBetter#0;class#Player#0" expanded="false" />
+            <element signature="method#getOut#0;class#Player#0" expanded="false" />
+            <element signature="method#checkFold#0;class#Player#0" expanded="false" />
+            <element signature="method#preflop#0;class#Player#0" expanded="false" />
+            <element signature="method#postflop#0;class#Player#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Information.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-709">
+          <caret line="19" column="27" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="27" />
+          <folding>
+            <element signature="method#evalPocket#0;class#Information#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Card.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-664">
+        <state relative-caret-position="-484">
           <caret line="97" column="10" selection-start-line="97" selection-start-column="10" selection-end-line="97" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Pocket.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-109">
+          <caret line="25" column="32" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
           <folding />
         </state>
       </provider>
@@ -779,31 +820,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/CardList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-30">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        <state relative-caret-position="146">
+          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#539#540#0" expanded="true" />
+            <element signature="e#567#568#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Information.java">
+    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/CardSet.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1699">
-          <caret line="19" column="27" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="27" />
+        <state relative-caret-position="-109">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Player.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="491">
-          <caret line="302" column="64" selection-start-line="302" selection-start-column="64" selection-end-line="302" selection-end-column="64" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
