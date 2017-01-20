@@ -1,7 +1,7 @@
 import argparse
 import socket
 import sys
-
+import prefloplogic as pl
 """
 Simple example pokerbot, written in python.
 
@@ -33,9 +33,14 @@ class Player:
             # When sending responses, terminate each response with a newline
             # character (\n) or your bot will hang!
             word = data.split()[0]
+            if word == 'NEWHAND':
+                # myHand stores hole cards. You'll want to update this if you ever discard
+                myHand = [data.split()[3],data.split()[4]]
+                print myHand
             if word == "GETACTION":
-                # Currently CHECK on every move. You'll want to change this.
-                s.send("CALL\n")
+                # calls function defined in other python file
+                action = pl.getaction(myHand,data)
+                s.send(action)
             elif word == "REQUESTKEYVALUES":
                 # At the end, the engine will allow your bot save key/value pairs.
                 # Send FINISH to indicate you're done.

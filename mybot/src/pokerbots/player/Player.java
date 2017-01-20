@@ -22,6 +22,9 @@ public class Player {
 
     private CardList allpossible = new CardList();
 
+    private double preasshole = 0;
+    private double postasshole = 0;
+
     public Player(PrintWriter output, BufferedReader input) {
         this.outStream = output;
         this.inStream = input;
@@ -55,6 +58,8 @@ public class Player {
         this.info.otherBank = Integer.parseInt(words[6]);
         this.info.timeBank = Double.parseDouble(words[7]);
     }
+
+
 
     /**
      * parses GetAction packet
@@ -90,6 +95,11 @@ public class Player {
 
         this.info.timeBank = Double.parseDouble(words[index]);
 
+        if (this.info.timeBank <= 0) {
+            System.out.println("ERROR: ran out of time: " + this.info.handId);
+        }
+
+        this.info.discardNew();
     }
 
     /**
@@ -152,21 +162,21 @@ public class Player {
     /**
      * gets the expected value of the outs on the next hand
      */
-    private double getOut() {
+    private double getOut(CardSet allCards) {
         double count = 0;
         double total;
 
         if (this.info.boardCards.size() == 3) {
-            total = (52-this.info.allCards.size())*(51-this.info.allCards.size());
+            total = (52-allCards.size())*(51-allCards.size());
             for (Card card1 : allpossible) {
-                CardSet hand = new CardSet(this.info.allCards);
+                CardSet hand = new CardSet(allCards);
 
-                if (!this.info.allCards.contains(card1)) {
+                if (!allCards.contains(card1)) {
                     hand.add(card1);
 
                     for (Card card2 : allpossible) {
                         CardSet hand2 = new CardSet(hand);
-                        if (!this.info.allCards.contains(card2) && !card1.equals(card2)) {
+                        if (!allCards.contains(card2) && !card1.equals(card2)) {
                             hand2.add(card2);
                             count += Hand.fastEval(hand2);
                         }
@@ -175,19 +185,18 @@ public class Player {
             }
             return count/total;
         } else if (this.info.boardCards.size() == 4) {
-            total = (52-this.info.allCards.size());
+            total = (52-allCards.size());
             for (Card card: allpossible) {
-                CardSet hand = new CardSet(this.info.allCards);
+                CardSet hand = new CardSet(allCards);
 
-                if (!this.info.allCards.contains(card)) {
+                if (!allCards.contains(card)) {
                     hand.add(card);
                     count += Hand.fastEval(hand);
                 }
             }
             return count/total;
         } else {
-            //System.out.println("ERROR: can't get outs not on flop or turn: " + this.info.boardCards.size());
-            return Hand.fastEval(this.info.allCards);
+            return Hand.fastEval(allCards);
         }
     }
 
@@ -205,18 +214,19 @@ public class Player {
     /**
      * pre flop strategy, base on chen ratings
      */
-    private void preflop(double rating) {
-
+    private void preflop() {
+        double rating = this.info.pocketRating;
+        double offset = (preasshole/this.info.handId)*20;
         //upper bounded at 10 big binds
-        int amount = (int)(this.info.bb*rating/2);
+        int amount = (int)(this.info.bb*rating);
 
         //good hand, use raise strategy
-        if (rating >= 6 && this.info.isLegal("RAISE")) {
+        if (rating >= 6-offset && this.info.isLegal("RAISE")) {
             int[] range = this.info.raiseRange();
 
-            //Pair of jacks or better, always raise
-            if (rating >= 12) {
-                int strongAmount = amount*2;
+            //Pair of jacks or better, always raise, or call any
+            if (rating >= 12 - offset) {
+                int strongAmount = amount*4;
                 if (strongAmount>=range[0] && strongAmount<=range[1]) {
                     outStream.println("RAISE:"+strongAmount);
                 } else if (strongAmount>range[1]){
@@ -224,6 +234,9 @@ public class Player {
                     outStream.println("RAISE:"+range[1]);
                 } else {
                     //enormous raise from opp, reraise be careful, only raise on kings or aces
+                    if (range[0] > this.info.bb * 50) {
+                        preasshole ++;
+                    }
                     outStream.println("RAISE:"+range[0]);
                 }
             }
@@ -240,6 +253,9 @@ public class Player {
                 else if (this.info.getCallAmount() < amount) {
                     outStream.println("CALL");
                 } else {
+                    if (this.info.getCallAmount() > this.info.bb * 50) {
+                        preasshole ++;
+                    }
                     checkFold();
                 }
             }
@@ -248,7 +264,7 @@ public class Player {
         //call blind, call raises only on ok hand
         else if (this.info.isLegal("CALL")) {
             //good hand, call, this case must be they all in
-            if (rating >= 14) {
+            if (rating >= 12 - offset) {
                 outStream.println("CALL");
             }
             //call blind
@@ -257,6 +273,9 @@ public class Player {
             } else if (rating >= 8 && this.info.getCallAmount() < amount) {
                 outStream.println("CALL");
             } else {
+                if (this.info.getCallAmount() > this.info.bb * 50) {
+                    preasshole ++;
+                }
                 checkFold();
             }
         }
@@ -284,7 +303,8 @@ public class Player {
     private void postflop() {
         double maximum = getMaximum();
         double strength = 1-getBetter();
-        double out = getOut()/maximum;
+        double out = getOut(this.info.allCards)/maximum;
+        double offset = postasshole/this.info.handId;
 
         Hand hand = Hand.eval(this.info.allCards);
         Hand board;
@@ -295,15 +315,20 @@ public class Player {
             return;
         }
 
-        double rating = (double)hand.getValue()/maximum;
+        //double rating = (double)hand.getValue()/maximum;
 
-        System.out.println(hand.toString() + ", " + rating + ", " + out);
         //double temp = strength;
+        strength += offset;
         strength = Math.min(1, (strength*0.8)+((out+0.3)*0.2) );
 
-        //System.out.println(this.info.pocket.toString() + ": " + hand.toString() + ", " + temp + ", " + strength);
+        //try discard
+        if (this.info.boardCards.size()==3 || this.info.boardCards.size()==4) {
+            discard(strength);
+        }
+
+        //System.out.println(this.info.pocket.toString() + ": " + hand.toString() + ", " + strength);
         //will raise ranging from 1 bb for 50/50 to 50 big blind for 100% win
-        int amount = Math.max(0,(int)((strength-0.49) * 100))*this.info.bb;//(int)(rating/maximum*100)/2 * this.info.bb;
+        int amount = Math.max(0,(int)((strength-0.4) * 100))*this.info.bb;//(int)(rating/maximum*100)/2 * this.info.bb;
 
         int[] range = this.info.raiseRange();
 
@@ -311,7 +336,7 @@ public class Player {
         if (strength > 0.2 && (double)(hand.getValue() - board.getValue()) / hand.getValue() > 0.01) {
 
             //70% chance win, very strong
-            if (strength > 0.7) {
+            if (strength > 0.6) {
                 if (this.info.isLegal("BET")) {
                     outStream.println("BET: " + amount);
                 } else if (this.info.isLegal("RAISE")) {
@@ -323,15 +348,20 @@ public class Player {
                     //must raise more than amount (reraise)
                     else if(strength > 0.85) {
                         outStream.println("RAISE:" + range[0]);
-                    } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount){
+                    } else if (this.info.isLegal("CALL")) {
                         outStream.println("CALL");
                     } else {
+                        postasshole++;
                         checkFold();
                     }
                 } else if (this.info.isLegal("CALL")) {
                     if (this.info.getCallAmount() < amount) {
                         outStream.println("CALL");
                     } else {
+                        if (this.info.getCallAmount() > this.info.bb*20) {
+                            System.out.println("post ass 1 " + postasshole / this.info.handId);
+                            postasshole++;
+                        }
                         checkFold();
                     }
                 } else {
@@ -344,27 +374,38 @@ public class Player {
                 } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount) {
                     outStream.println("CALL");
                 } else {
+                    if (this.info.getCallAmount() > this.info.bb*20) {
+                        System.out.println("post ass 2 " + postasshole / this.info.handId);
+                        postasshole++;
+                    }
                     checkFold();
                 }
-            } else {
+            }
+            //shitty strength < 0.4
+            else {
                 checkFold();
             }
         } else {
-            //System.out.println("board: " + better);
-            //System.out.println("board strong: " + hand.toString() + this.info.pocket.toString());
             checkFold();
         }
     }
 
 
     /**
+     * helper method used in discard to see which card to discard
+     */
+    private double whichDiscard(Card card) {
+        CardSet allCards = this.info.boardCards;
+        allCards.add(card);
+        return getOut(allCards);
+    }
+
+    /**
      * discard strategy
      */
-    private void discard() {
+    private void discard(double strength) {
         Hand hand = Hand.eval(this.info.allCards);
         Hand board;
-
-        double out = getOut()/getMaximum();
 
         if (this.info.boardCards.size() > 0) {
             board = Hand.eval(this.info.boardCards);
@@ -374,8 +415,13 @@ public class Player {
         }
 
         if (this.info.isLegal("DISCARD")) {
-            if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && out < 0.2) {
-                outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
+            if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && strength < 0.3) {
+                //must decide to throw first or second
+                if (whichDiscard(this.info.pocket.getFirst()) < whichDiscard(this.info.pocket.getSecond())) {
+                    outStream.println("DISCARD:" + this.info.pocket.getFirst().toString());
+                } else {
+                    outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
+                }
             }
         }
     }
@@ -398,20 +444,17 @@ public class Player {
                     newHandInfo(words);
                 } else if ("GETACTION".compareToIgnoreCase(words[0]) == 0) {
                     parseAction(words);
-                    double rating = this.info.pocketRating;
 
                     //Pre Flop Strategy
                     if (this.info.boardCards.size() == 0) {
-                        preflop(rating);
+                        preflop();
                     }
                     //Flop
                     else if (this.info.boardCards.size() == 3) {
-                        discard();
                         postflop();
                     }
                     //turn
                     else if (this.info.boardCards.size() == 4) {
-                        discard();
                         postflop();
                     }
                     //river

@@ -12,8 +12,8 @@ import java.util.Iterator;
  * @author Cameron Zemek <grom358@gmail.com>
  */
 public class Pocket {
-    private Card first;
-    private Card second;
+    public Card first;
+    public Card second;
 
     public Pocket(Collection<Card> cards) {
         if (cards.size() < 2) {

@@ -89,6 +89,32 @@ public class Information {
     }
 
     /**
+     * discard new refreshes your pocket with the new card drawn from a discard action, if a card was discarded
+     */
+    public boolean discardNew() {
+        for (int i=0; i<this.lastActions.length; i++) {
+            if (this.lastActions[i].contains("DISCARD") && this.lastActions[i].contains(this.yourName)) {
+                String[] discard = this.lastActions[i].split(":");
+                System.out.println(this.lastActions[i]);
+                Card old = Card.valueOf(discard[1]);
+                Card replace = Card.valueOf(discard[2]);
+                System.out.println("discard card: " + old.toString() + " -> " + replace);
+                if (old.equals(this.pocket.getFirst())) {
+                    this.pocket.first = replace;
+                    return true;
+                } else if (old.equals(this.pocket.getSecond())) {
+                    this.pocket.second = replace;
+                    return true;
+                } else {
+                    System.out.println("ERROR: Discarded card not part of old hand: " + old.toString() + ", " + this.pocket.toString());
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * evaluate hand by chen method
      *
      */
