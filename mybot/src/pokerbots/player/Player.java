@@ -216,7 +216,7 @@ public class Player {
      */
     private void preflop() {
         double rating = this.info.pocketRating;
-        double offset = (preasshole/this.info.handId)*20;
+        double offset = (preasshole/this.info.handId)*16;
         //upper bounded at 10 big binds
         int amount = (int)(this.info.bb*rating);
 
@@ -250,10 +250,10 @@ public class Player {
                     outStream.println("RAISE:"+range[1]);
                 }
                 //consider calling
-                else if (this.info.getCallAmount() < amount) {
+                else if (this.info.potSize <= this.info.bb*2 || (this.info.isLegal("CALL") && this.info.getCallAmount() < amount)) {
                     outStream.println("CALL");
                 } else {
-                    if (this.info.getCallAmount() > this.info.bb * 50) {
+                    if (this.info.potSize > this.info.bb*2 && this.info.isLegal("CALL") && this.info.getCallAmount() > this.info.bb * 50) {
                         preasshole ++;
                     }
                     checkFold();
@@ -268,7 +268,7 @@ public class Player {
                 outStream.println("CALL");
             }
             //call blind
-            else if (this.info.potSize < this.info.bb * 2) {
+            else if (this.info.potSize <= this.info.bb * 2) {
                 outStream.println("CALL");
             } else if (rating >= 8 && this.info.getCallAmount() < amount) {
                 outStream.println("CALL");
@@ -307,13 +307,7 @@ public class Player {
         double offset = postasshole/this.info.handId;
 
         Hand hand = Hand.eval(this.info.allCards);
-        Hand board;
-        if (this.info.boardCards.size() > 0) {
-            board = Hand.eval(this.info.boardCards);
-        } else {
-            System.out.println("ERROR: should not call postflop with no board cards: " + this.info.boardCards.toString());
-            return;
-        }
+        Hand board = Hand.eval(this.info.boardCards);
 
         //double rating = (double)hand.getValue()/maximum;
 
@@ -374,7 +368,7 @@ public class Player {
                 } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount) {
                     outStream.println("CALL");
                 } else {
-                    if (this.info.getCallAmount() > this.info.bb*20) {
+                    if (this.info.isLegal("CALL") && this.info.getCallAmount() > this.info.bb*20) {
                         System.out.println("post ass 2 " + postasshole / this.info.handId);
                         postasshole++;
                     }
@@ -444,7 +438,7 @@ public class Player {
                     newHandInfo(words);
                 } else if ("GETACTION".compareToIgnoreCase(words[0]) == 0) {
                     parseAction(words);
-
+                    System.out.println(this.info.timeBank);
                     //Pre Flop Strategy
                     if (this.info.boardCards.size() == 0) {
                         preflop();

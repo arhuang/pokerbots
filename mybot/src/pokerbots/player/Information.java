@@ -76,6 +76,10 @@ public class Information {
      * gets the amount to call
      */
     public int getCallAmount() {
+        if (!isLegal("CALL")) {
+            System.out.println("ERROR: call not legal: " + this.boardCards.toString());
+            return 0;
+        }
         for (int i=0; i<this.lastActions.length; i++) {
             if (this.lastActions[i].contains("RAISE") || this.lastActions[i].contains("BET")) {
                 String[] action = this.lastActions[i].split(":");
@@ -84,7 +88,7 @@ public class Information {
                 }
             }
         }
-        System.out.println("ERROR: nothing to call, opponent did not raise");
+        System.out.println("ERROR: nothing to call, opponent did not raise: " + this.boardCards.toString());
         return 0;
     }
 
@@ -95,10 +99,9 @@ public class Information {
         for (int i=0; i<this.lastActions.length; i++) {
             if (this.lastActions[i].contains("DISCARD") && this.lastActions[i].contains(this.yourName)) {
                 String[] discard = this.lastActions[i].split(":");
-                System.out.println(this.lastActions[i]);
                 Card old = Card.valueOf(discard[1]);
                 Card replace = Card.valueOf(discard[2]);
-                System.out.println("discard card: " + old.toString() + " -> " + replace);
+
                 if (old.equals(this.pocket.getFirst())) {
                     this.pocket.first = replace;
                     return true;

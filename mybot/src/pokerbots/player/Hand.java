@@ -125,7 +125,13 @@ public class Hand implements Comparable<Hand> {
             mask = RANK_MASK << Long.numberOfTrailingZeros(fourOfKind);
             CardSet kickers = new CardSet(val & ~mask);
             CardList hand = (new CardSet(mask)).toList();
-            hand.add(kickers.toList().get(0));
+            CardList c = kickers.toList();
+            if (c.size()>0){
+                hand.add(c.get(0));
+            } else {
+                System.out.println("ERROR: no kicker: " + hand.toString());
+            }
+
             return handValue(Category.FOUR_OF_A_KIND, hand);
         }
 
