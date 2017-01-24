@@ -36,13 +36,14 @@
       <file leaf-file-name="Player.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Player.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1155">
-              <caret line="237" column="34" selection-start-line="237" selection-start-column="34" selection-end-line="237" selection-end-column="34" />
+            <state relative-caret-position="264">
+              <caret line="327" column="97" selection-start-line="327" selection-start-column="97" selection-end-line="327" selection-end-column="97" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#getMaximum#0;class#Player#0" expanded="false" />
                 <element signature="method#getBetter#0;class#Player#0" expanded="false" />
                 <element signature="method#checkFold#0;class#Player#0" expanded="false" />
+                <element signature="method#preflop#0;class#Player#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -617,6 +618,7 @@
             <element signature="method#getMaximum#0;class#Player#0" expanded="false" />
             <element signature="method#getBetter#0;class#Player#0" expanded="false" />
             <element signature="method#checkFold#0;class#Player#0" expanded="false" />
+            <element signature="method#preflop#0;class#Player#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -677,6 +679,7 @@
             <element signature="method#getMaximum#0;class#Player#0" expanded="false" />
             <element signature="method#getBetter#0;class#Player#0" expanded="false" />
             <element signature="method#checkFold#0;class#Player#0" expanded="false" />
+            <element signature="method#preflop#0;class#Player#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -710,6 +713,7 @@
             <element signature="method#getMaximum#0;class#Player#0" expanded="false" />
             <element signature="method#getBetter#0;class#Player#0" expanded="false" />
             <element signature="method#checkFold#0;class#Player#0" expanded="false" />
+            <element signature="method#preflop#0;class#Player#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -869,13 +873,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pokerbots/player/Player.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1155">
-          <caret line="237" column="34" selection-start-line="237" selection-start-column="34" selection-end-line="237" selection-end-column="34" />
+        <state relative-caret-position="264">
+          <caret line="327" column="97" selection-start-line="327" selection-start-column="97" selection-end-line="327" selection-end-column="97" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#getMaximum#0;class#Player#0" expanded="false" />
             <element signature="method#getBetter#0;class#Player#0" expanded="false" />
             <element signature="method#checkFold#0;class#Player#0" expanded="false" />
+            <element signature="method#preflop#0;class#Player#0" expanded="false" />
           </folding>
         </state>
       </provider>

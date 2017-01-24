@@ -316,8 +316,8 @@ public class Player {
         //double rating = (double)hand.getValue()/maximum;
 
         //double temp = strength;
-        strength += offset;
-        strength = Math.min(1, (strength*0.8)+((out+0.3)*0.2) );
+        strength += offset/2;
+        strength = Math.min(1, (strength*0.9)+(out*0.1) );
 
         //try discard
         if ((this.info.boardCards.size()==3 || this.info.boardCards.size()==4) && this.info.isLegal("DISCARD")) {
@@ -325,9 +325,9 @@ public class Player {
             return;
         }
 
-        //System.out.println(this.info.pocket.toString() + ": " + hand.toString() + ", " + strength);
+        System.out.println(this.info.pocket.toString() + ": " + hand.toString() + ", " + strength);
         //will raise ranging from 1 bb for 50/50 to 50 big blind for 100% win
-        int amount = Math.max(0,(int)((strength-0.4) * 100))*this.info.bb;//(int)(rating/maximum*100)/2 * this.info.bb;
+        int amount = Math.max(0,(int)((strength-0.49) * 100))*this.info.bb;//(int)(rating/maximum*100)/2 * this.info.bb;
 
         int[] range = this.info.raiseRange();
 
@@ -335,7 +335,7 @@ public class Player {
         if (strength > 0.2 && (double)(hand.getValue() - board.getValue()) / hand.getValue() > 0.01) {
 
             //70% chance win, very strong
-            if (strength > 0.6) {
+            if (strength > 0.7) {
                 if (this.info.isLegal("BET")) {
                     int temp = Math.min(amount,range[1]);
                     if (temp > 0) {
@@ -371,10 +371,10 @@ public class Player {
                     checkFold();
                 }
             }
-            else if (strength > 0.4) {
+            else if (strength > 0.45) {
                 if (this.info.isLegal("BET")) {
-                    int temp = Math.min(amount,range[1]);
-                    if (temp > 0) {
+                    int temp = Math.min(amount/4,range[1]);
+                    if (temp > range[0]) {
                         outStream.println("BET:" + temp);
                     } else {
                         checkFold();
@@ -389,7 +389,7 @@ public class Player {
                     checkFold();
                 }
             }
-            //shitty strength < 0.4
+            //shitty strength < 0.4 (Low high card)
             else {
                 checkFold();
             }
@@ -397,7 +397,6 @@ public class Player {
             checkFold();
         }
     }
-
 
     /**
      * helper method used in discard to see which card to discard
@@ -458,7 +457,7 @@ public class Player {
                     newHandInfo(words);
                 } else if ("GETACTION".compareToIgnoreCase(words[0]) == 0) {
                     parseAction(words);
-                    System.out.println(this.info.timeBank);
+
                     //Pre Flop Strategy
                     if (this.info.boardCards.size() == 0) {
                         preflop();
