@@ -301,17 +301,25 @@ public class Player {
             double out1 = outDiscard(this.info.pocket.getFirst(), max);
             double out2 = outDiscard(this.info.pocket.getSecond(), max);
 
-            System.out.println(this.info.pocket.toString());
+//            System.out.println(this.info.pocket.toString());
+//
+//            System.out.println(out1-out2);
+//            System.out.println(out1-out);
+//            System.out.println(out2-out);
+//            System.out.println("shit");
 
-            System.out.println(out1-out2);
-            System.out.println(out1-out);
-            System.out.println(out2-out);
-            System.out.println("shit");
-
-            if (out1 - out2 > -0.05 && out1 - out > 0.05 && this.info.pocket.getSecond().getRank().getValue() < 13) {
-                outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
-            } else if (out2 - out1 > 0.03 && out2 - out > 0.05 && this.info.pocket.getFirst().getRank().getValue() < 13) {
-                outStream.println("DISCARD:" + this.info.pocket.getFirst().toString());
+            if ((out1 - out2)/out1 > -0.3 && (out1 - out)/out > 0.1 ) {
+                if (this.info.pocket.getSecond().getRank().getValue() > 12 && (out1 - out)/out < 0.5) {
+                    checkFold();
+                } else {
+                    outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
+                }
+            } else if (out2 > out1 && (out2 - out)/out > 0.1 ) {
+                if (this.info.pocket.getFirst().getRank().getValue() > 12 && (out2 - out)/out < 0.5) {
+                    checkFold();
+                } else {
+                    outStream.println("DISCARD:" + this.info.pocket.getFirst().toString());
+                }
             } else {
                 checkFold();
             }
