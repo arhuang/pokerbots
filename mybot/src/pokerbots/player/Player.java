@@ -220,10 +220,28 @@ public class Player {
         double offset = (preasshole/this.info.handId)*10;
         //upper bounded at 10 big binds
         int amount = (int)(this.info.bb*rating);
+        int[] range = this.info.raiseRange();
+
+        if (offset > 0.9) {
+            if (this.info.isLegal("RAISE") && rating > 6) {
+                outStream.println("RAISE:" + range[1]);
+            }
+            else if (this.info.isLegal("CALL") && this.info.potSize <= this.info.bb * 2 && rating > 0) {
+                outStream.println("CALL");
+            } else if (this.info.isLegal("CALL") && rating > 4) {
+                if (this.info.getCallAmount() > this.info.bb * 50) {
+                    preasshole++;
+                }
+                outStream.println("CALL");
+            } else {
+                preasshole++;
+                checkFold();
+            }
+            return;
+        }
 
         //good hand, use raise strategy
-        if (rating >= 5-offset && this.info.isLegal("RAISE")) {
-            int[] range = this.info.raiseRange();
+        if (rating >= 6-offset && this.info.isLegal("RAISE")) {
 
             //Pair of jacks or better, always raise, or call any
             if (rating >= 12 - offset) {
@@ -241,7 +259,6 @@ public class Player {
                     } else  {
                         outStream.println("CALL");
                     }
-
                 }
             }
 
@@ -286,6 +303,9 @@ public class Player {
 
         //you are big blind, not good enough to raise on
         else {
+            if (this.info.getCallAmount() > this.info.bb * 50) {
+                preasshole ++;
+            }
             checkFold();
         }
     }
@@ -317,15 +337,15 @@ public class Player {
 
         //double temp = strength;
         strength += offset/2;
-        strength = Math.min(1, (strength*0.9)+(out*0.1) );
+        strength = Math.min(1, (strength*0.8)+(out*0.2) );
 
         //try discard
         if ((this.info.boardCards.size()==3 || this.info.boardCards.size()==4) && this.info.isLegal("DISCARD")) {
-            discard(strength);
+            discard(out,strength);
             return;
         }
 
-        System.out.println(this.info.pocket.toString() + ": " + hand.toString() + ", " + strength);
+        //System.out.println(this.info.pocket.toString() + ": " + hand.toString() + ", " + strength);
         //will raise ranging from 1 bb for 50/50 to 50 big blind for 100% win
         int amount = Math.max(0,(int)((strength-0.49) * 100))*this.info.bb;//(int)(rating/maximum*100)/2 * this.info.bb;
 
@@ -335,7 +355,7 @@ public class Player {
         if (strength > 0.2 && (double)(hand.getValue() - board.getValue()) / hand.getValue() > 0.01) {
 
             //70% chance win, very strong
-            if (strength > 0.7) {
+            if (strength > 0.75) {
                 if (this.info.isLegal("BET")) {
                     int temp = Math.min(amount,range[1]);
                     if (temp > 0) {
@@ -359,7 +379,7 @@ public class Player {
                         checkFold();
                     }
                 } else if (this.info.isLegal("CALL")) {
-                    if (this.info.getCallAmount() < amount) {
+                    if (strength > 0.85 || this.info.getCallAmount() < amount) {
                         outStream.println("CALL");
                     } else {
                         if (this.info.getCallAmount() > this.info.bb*20) {
@@ -379,8 +399,7 @@ public class Player {
                     } else {
                         checkFold();
                     }
-
-                } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount) {
+                } else if (this.info.isLegal("CALL") && this.info.getCallAmount() < amount/4) {
                     outStream.println("CALL");
                 } else {
                     if (this.info.isLegal("CALL") && this.info.getCallAmount() > this.info.bb*20) {
@@ -401,38 +420,57 @@ public class Player {
     /**
      * helper method used in discard to see which card to discard
      */
-    private double whichDiscard(Card card) {
-        CardSet allCards = this.info.boardCards;
+    private double outDiscard(Card card, double max) {
+        CardSet allCards = new CardSet(this.info.boardCards);
         allCards.add(card);
-        return getOut(allCards);
+        double count = 0;
+
+
+        for (Card replace: allpossible) {
+            if (!allCards.contains(replace)) {
+                CardSet temp = new CardSet(allCards);
+                temp.add(replace);
+                count += getOut(temp)/max;
+            }
+        }
+
+        return count/(52.-allCards.size());
     }
 
     /**
      * discard strategy
      */
-    private void discard(double strength) {
-        Hand hand = Hand.eval(this.info.allCards);
-        Hand board;
-
-        if (this.info.boardCards.size() == 3 || this.info.boardCards.size() == 4) {
-            board = Hand.eval(this.info.boardCards);
-        } else {
-            System.out.println("ERROR: should not discard with no board cards: " + this.info.boardCards.toString());
-            checkFold();
-            return;
-        }
+    private void discard(double out, double strength) {
 
         if (this.info.isLegal("DISCARD")) {
-            if ((double)(hand.getValue() - board.getValue()) / hand.getValue() < 0.01 && strength < 0.3) {
-                //must decide to throw first or second
-                if (whichDiscard(this.info.pocket.getFirst()) < whichDiscard(this.info.pocket.getSecond())) {
-                    outStream.println("DISCARD:" + this.info.pocket.getFirst().toString());
+            //Hand hand = Hand.eval(this.info.allCards);
+            double max = getMaximum();
+            double out1 = outDiscard(this.info.pocket.getFirst(), max);
+            double out2 = outDiscard(this.info.pocket.getSecond(), max);
+
+//            System.out.println(this.info.pocket.toString());
+//
+//            System.out.println((out1-out2)/out1);
+//            System.out.println((out1-out)/out);
+//            System.out.println((out2-out)/out);
+//            System.out.println("shit");
+
+            if ((out1 - out2)/out1 > -0.3 && (out1 - out)/out > 0.1 ) {
+                if (this.info.pocket.getSecond().getRank().getValue() > 12 && (out1 - out)/out < 0.5) {
+                    checkFold();
                 } else {
                     outStream.println("DISCARD:" + this.info.pocket.getSecond().toString());
+                }
+            } else if (out2 > out1 && (out2 - out)/out > 0.1 ) {
+                if (this.info.pocket.getFirst().getRank().getValue() > 12 && (out2 - out)/out < 0.5) {
+                    checkFold();
+                } else {
+                    outStream.println("DISCARD:" + this.info.pocket.getFirst().toString());
                 }
             } else {
                 checkFold();
             }
+
         } else {
             System.out.println("ERROR: cannot discard, should not be called");
             checkFold();

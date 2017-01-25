@@ -436,7 +436,7 @@ public class Hand implements Comparable<Hand> {
         Card[] highA = {Card.valueOf("9s"),Card.valueOf("Jc"),Card.valueOf("Qs"),Card.valueOf("Kc"),Card.valueOf("As")};
         Card[] pair = {Card.valueOf("As"),Card.valueOf("Ac"),Card.valueOf("Ks"),Card.valueOf("Qc"),Card.valueOf("Js")};
         Card[] twoPair = {Card.valueOf("As"),Card.valueOf("Ac"),Card.valueOf("Ks"),Card.valueOf("Kc"),Card.valueOf("Qs")};
-        Card[] triple = {Card.valueOf("As"),Card.valueOf("Ac"),Card.valueOf("Ad"),Card.valueOf("Kc"),Card.valueOf("Qs")};
+        Card[] triple = {Card.valueOf("2s"),Card.valueOf("2c"),Card.valueOf("2d"),Card.valueOf("5c"),Card.valueOf("7s")};
         Card[] straight = {Card.valueOf("As"),Card.valueOf("Kc"),Card.valueOf("Qs"),Card.valueOf("Jc"),Card.valueOf("Ts")};
         Card[] flushS = {Card.valueOf("As"),Card.valueOf("Ks"),Card.valueOf("Qs"),Card.valueOf("Js"),Card.valueOf("9s")};
         Card[] flushC = {Card.valueOf("2c"),Card.valueOf("3c"),Card.valueOf("4c"),Card.valueOf("5c"),Card.valueOf("7c")};
@@ -483,6 +483,7 @@ public class Hand implements Comparable<Hand> {
         }
         double max = 135191738.;
         System.out.println(Hand.eval(test1).toString() + Hand.eval(test1).getValue()/max);
+        System.out.println(Hand.fastEval(test1));
         System.out.println(Hand.eval(temp).toString() + Hand.eval(temp).getValue()/max);
         System.out.println(Hand.eval(test2).toString() + Hand.eval(test2).getValue()/max);
         System.out.println(Hand.eval(test3).toString() + Hand.eval(test3).getValue()/max);

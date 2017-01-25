@@ -98,15 +98,16 @@ public class Information {
     public boolean discardNew() {
         for (int i=0; i<this.lastActions.length; i++) {
             if (this.lastActions[i].contains("DISCARD") && this.lastActions[i].contains(this.yourName)) {
+                //System.out.println(this.lastActions[i]);
                 String[] discard = this.lastActions[i].split(":");
                 Card old = Card.valueOf(discard[1]);
                 Card replace = Card.valueOf(discard[2]);
 
                 if (old.equals(this.pocket.getFirst())) {
-                    this.pocket.first = replace;
+                    this.pocket = new Pocket(replace, this.pocket.getSecond());
                     return true;
                 } else if (old.equals(this.pocket.getSecond())) {
-                    this.pocket.second = replace;
+                    this.pocket = new Pocket(replace, this.pocket.getFirst());
                     return true;
                 } else {
                     System.out.println("ERROR: Discarded card not part of old hand: " + old.toString() + ", " + this.pocket.toString());
@@ -122,7 +123,7 @@ public class Information {
      *
      */
     public double evalPocket() {
-        double rating = 1;
+        double rating;
         Card c1 = this.pocket.getFirst();
         int highCard = c1.getRank().getValue();
         switch (highCard) {

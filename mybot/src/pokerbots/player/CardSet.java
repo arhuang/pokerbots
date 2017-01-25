@@ -103,4 +103,12 @@ public final class CardSet {
         sb.append(']');
         return sb.toString();
     }
+
+    public static void main(String[] args) {
+        CardSet set1 = new CardSet();
+        set1.add(Card.valueOf("Ah"));
+        CardSet set2 = set1;
+        set2.add(Card.valueOf("8c"));
+        System.out.println(set1.toString() + " " + set2.toString());
+    }
 }
